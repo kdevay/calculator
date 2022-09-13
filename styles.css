@@ -1,0 +1,70 @@
+/* skeleton design */
+body {
+    width: 50%;
+    max-width: 2000px;
+    min-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    align-content: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    background-color: #bfb9ac;
+}
+
+.calculator {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 30px;
+    margin: 7vh;
+    height: 660px;
+    width: 535px;
+    color: black;
+    border: 1px solid black;
+    background-color: grey;
+}
+
+.display{
+    width: 475px;
+    height: 68px;
+    color: black;
+    border: 1px solid rgb(8, 41, 41);
+    background-color: rgb(32, 156, 156);
+}
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 475px;
+    height: 500px;
+    color: black;
+    border: 1px solid rgb(8, 41, 41);
+    background-color: rgb(32, 156, 156);
+}
+
+.numbers{
+    height:400px;
+    width: 400px;
+    margin: 5px 10px 5px 0px;
+    color: black;
+    border: 1px solid rgb(8, 41, 41);
+    background-color: rgb(237, 118, 92);
+}
+
+.operators{
+    height:400px;
+    width: 75px;
+    margin: 5px 0px 5px 10px;;
+    color: black;
+    border: 1px solid rgb(8, 41, 41);
+    background-color: rgb(237, 118, 92);
+}
