@@ -1,5 +1,5 @@
-/* skeleton design */
 body {
+    font-family: 'Lily Script One', 'Courier New', Courier, monospace;
     width: 50%;
     max-width: 2000px;
     min-width: 1000px;
@@ -13,25 +13,24 @@ body {
     background-color: #bfb9ac;
 }
 
+
+/* layer 1 */
 .calculator {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 30px;
-    margin: 7vh;
-    height: 660px;
-    width: 535px;
+    padding: 10px;
+    margin: 5vh;
+    height: 680px;
+    width: 500px;
     color: black;
     border: 1px solid black;
     background-color: grey;
 }
 
+
+/* layer 2 */
 .display{
-    width: 475px;
-    height: 68px;
+    padding: 10px 5px 2px 5px;
+    width: 450px;
+    height: 70px;
     color: black;
     border: 1px solid rgb(8, 41, 41);
     background-color: rgb(32, 156, 156);
@@ -43,28 +42,80 @@ body {
     align-content: center;
     flex-wrap: nowrap;
     align-items: center;
-    justify-content: space-evenly;
-    width: 475px;
-    height: 500px;
+    justify-content: space-between;
+    width: 450px;
+    height: 400px;
     color: black;
     border: 1px solid rgb(8, 41, 41);
-    background-color: rgb(32, 156, 156);
+    background-color: rgb(32, 156, 156);  /* row */
+}
+
+.end {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    width: 450px;
+    border: 1px solid black;
+    background-color: rgb(78, 138, 93);
+}
+
+
+/* layer 3 */
+.answer {
+    text-align: right;
+    font-size: 60px;
+    padding: 0px;
+    margin: 0px;
 }
 
 .numbers{
-    height:400px;
-    width: 400px;
-    margin: 5px 10px 5px 0px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-around;
+    align-items: center;
+    gap: 16px;
+    height: 400px;
+    width: 330px;
     color: black;
     border: 1px solid rgb(8, 41, 41);
     background-color: rgb(237, 118, 92);
 }
 
-.operators{
+.operators {
+    justify-content: space-evenly;
     height:400px;
-    width: 75px;
-    margin: 5px 0px 5px 10px;;
+    width: 90px;
     color: black;
     border: 1px solid rgb(8, 41, 41);
     background-color: rgb(237, 118, 92);
+}
+
+
+/* innermost elements */
+button { /* row */
+    color: white;
+    font-size: 20px;
+    border-radius: 10px;
+    border: 1px solid black;
+    background-color:rgb(34, 44, 71);
+    height: 80px;
+    width: 80px;
+    margin: 0px 0px 0px 0px;
+}
+
+
+
+/* shared styles */
+.calculator,
+.operators {/* column */
+    justify-content: space-evenly;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
 }
