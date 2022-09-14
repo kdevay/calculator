@@ -1,7 +1,9 @@
-body {
-    width: 50%;
-    max-width: 2000px;
-    min-width: 1000px;
+.body {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    top: 0;
     margin: 0 auto;
     text-align: center;
     display: flex;
@@ -22,7 +24,7 @@ body {
     flex-wrap: nowrap;
     align-items: center;
     padding: 10px;
-    margin: 5vh;
+    margin-top: 1vh;
     height: 680px;
     width: 500px;
     border: 5px solid rgb(69 95 96);
