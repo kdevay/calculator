@@ -194,7 +194,7 @@ function calculate(array) {
         ans += add(num1, num2);
     } else if (action = '-') {
         ans += subtract(num1, num2);
-    } else if (action = '/' {
+    } else if (action = '/') {
         ans += divide(num1, num2);
     } else { // action = '*'
         ans += multiply(num1, num2);
@@ -254,8 +254,8 @@ plus.addEventListener('click', function(){ operationLimiter('+')});
 // Transform buttons
 const signChange = document.getElementById('sign-change');
 signChange.addEventListener('click', function(){ operationLimiter('sign-change')});
-const clear = document.getElementById('clear');
-clear.addEventListener('click', function(){ operationLimiter('clear')});
+const clearButton = document.getElementById('clear');
+clearButton.addEventListener('click', function(){ operationLimiter('clear')});
 const decimal = document.getElementById('.')
 decimal.addEventListener('click', function(){ operationLimiter('decimal')});
 
