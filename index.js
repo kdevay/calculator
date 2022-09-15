@@ -108,7 +108,7 @@ function sciNotationConverter(number) {
 // Handles all user input: storage and error check
 // limits operations to two numbers and one operator
 function operationLimiter(input){
-    // Decimals //
+    // Input is Decimal //
     if (input === '.') {
         if (!decimalAdded){
                 addDecimal();
@@ -118,7 +118,7 @@ function operationLimiter(input){
         return 'ERROR'; 
     }
 
-    // Transformations //
+    // Input is Transformation //
     if (input === 'sign-change') { // sign change
         changeSign();
         return;
@@ -127,7 +127,7 @@ function operationLimiter(input){
         return;
     }
 
-    // Operators //
+    // Input is Operator //
     if (input === isOperator) { 
         resetFlags();
         if (isFirstInput) { // default to zero if 1st input is operator
@@ -137,22 +137,47 @@ function operationLimiter(input){
             operation = [];
             operation.push(temp);
         }
+        operation.push(input);
+        return;
+    } else if (input === '='){
+        if (isFirstInput) { // default to zero
+            operation.push(0);
+        } else if (isThirdInput) {
+            let temp = operation[0];
+            operation = [];
+            operation.push(temp);
+        } else if(isFourthInput){
+            let temp = calculate(operation);
+            operation = [];
+            operation.push(temp);
+        }
+        return
     }
 
-    // Numbers //
+    // Input is Number //
     if ( input === isNumber) {
         if (isSecondInput){
             operation[0] += input;
-            answer = input;
+            if (!isTooLong(operation[0])) {
+                answer = operation[0];
+                return;
+            }
+            answer = sciNotationConverter(operation[0]);
+            // displayMessage()
             return;
         } else if (isFourthInput){
             operation[2] += input;
-            answer = input;
+            if (!isTooLong(operation[2])) {
+                answer = operation[2];
+                return;
+            }
+            answer = sciNotationConverter(operation[2]);
+            // displayMessage()
             return;
         }
+        operation.push(input);
+        return;
     }
-    operation.push(input);
-    return;
 }
 
 
@@ -164,7 +189,7 @@ function calculate(array) {
     let action = array[1];
     let ans = 0;
     
-    // Find which operator is being called
+    // Identify operator & call matching function
     if (action = '+') {
         ans += add(num1, num2);
     } else if (action = '-') {
