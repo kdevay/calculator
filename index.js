@@ -108,15 +108,13 @@ function sciNotationConverter(number) {
 // Handles all user input: storage and error check
 // limits operations to two numbers and one operator
 function operationLimiter(input){
-    // Bools
+    // Bools for tracking input
     const isFirstInput = operation.length === 0;
     const isSecondInput = operation.length === 1;
     const isThirdInput = operation.length === 2;
     const isFourthInput = operation.length === 3;
     let isOperator = (input === '/' || input === '*' || input === '-' || input === '+')
-    
-    console.log("input: ", input);
-    console.log("typeof input: ", typeof input);
+
 
 
     // Input is Decimal //
@@ -166,9 +164,7 @@ function operationLimiter(input){
     }
 
     // Input is Number //
-    console.log("is Number");
     if (isSecondInput){
-        console.log("is second input");
         operation[0] += input;
         if (!isTooLong(operation[0])) {
             answer.textContent = operation[0];
@@ -178,7 +174,6 @@ function operationLimiter(input){
         // displayMessage()
         return;
     } else if (isFourthInput){
-        console.log("is fourth input");
         operation[2] += input;
         if (!isTooLong(operation[2])) {
             answer.textContent = operation[2];
@@ -190,13 +185,9 @@ function operationLimiter(input){
     }
     operation.push(input);
     if (isFirstInput){
-        console.log("is first input");
-        console.log('operation[0]: ', operation[0]);
-        console.log('answer: ', answer);
         answer.textContent = operation[0];
         return;
     }
-    console.log("is third input");
     answer.textContent = operation[2];
     return;
 }
@@ -211,12 +202,11 @@ function calculate(array) {
     let ans = 0;
     
     // Identify operator & call matching function
-    if (action = '+') {
+    if (action === '+') {
         ans += add(num1, num2);
-    } else if (action = '-') {
-        console.log('entered minus');
+    } else if (action === '-') {
         ans += subtract(num1, num2);
-    } else if (action = '/') {
+    } else if (action === '/') {
         ans += divide(num1, num2);
     } else { // action = '*'
         ans += multiply(num1, num2);
