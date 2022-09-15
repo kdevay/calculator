@@ -38,7 +38,7 @@ function changeSign() {
 function clear(){
     answer = '0.0';
     operation = []
-    reset();
+    resetFlags();
     return;
 }
 
@@ -108,6 +108,8 @@ function sciNotationConverter(number) {
 // Handles all user input: storage and error check
 // limits operations to two numbers and one operator
 function operationLimiter(input){
+    console.log("input: ", input);
+
     // Input is Decimal //
     if (input === '.') {
         if (!decimalAdded){
