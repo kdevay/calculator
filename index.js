@@ -44,13 +44,12 @@ function clear(){
 
 // reset flags to default values
 function resetFlags(){
-    isAnsFlag = false;
     decimalAdded = false;
     return;
 }
 
 // decimal
-function addDecimal(input){
+function addDecimal(isFirstInput, isSecondInput, isThirdInput){
     if (isFirstInput || isThirdInput) {
         operation.push('.');
     } else if (isSecondInput){
@@ -135,7 +134,7 @@ function operationLimiter(input){
     // Input is Decimal //
     if (input === '.') {
         if (!decimalAdded){
-                addDecimal();
+                addDecimal(isFirstInput, isSecondInput, isThirdInput);
                 return;
         }
         // Don't allow multiple decimals in one number
@@ -157,7 +156,6 @@ function operationLimiter(input){
 
     // Input is Operator //
     if (isOperator) { 
-        console.log("passed operator test");
         resetFlags();
         if (isFirstInput) { // default to zero if 1st input is operator
             operation.push(0);
@@ -184,13 +182,9 @@ function operationLimiter(input){
     }
 
     // Input is Number //
-    
-    
     if (isSecondInput){
-        console.log("input: ", input);
         operation[0] += input;
-        console.log("operation 0: ", operation[0]);
-
+        console.log ("second: ", input);
         if (isTooLong(operation[0])) {
             answer.textContent = sciNotationConverter(operation[0]);
             return;
@@ -200,6 +194,7 @@ function operationLimiter(input){
         answer.textContent = operation[0];
         return;
     } else if (isFourthInput){
+        console.log ("fourth: ", input);
         operation[2] += input;
         if (!isTooLong(operation[2])) {
             answer.textContent = operation[2];
@@ -211,9 +206,18 @@ function operationLimiter(input){
     }
     operation.push(input);
     if (isFirstInput){
+        if (isTooLong(operation[0])) {
+            answer.textContent = sciNotationConverter(operation[0]);
+            return;
+        }
         answer.textContent = operation[0];
         return;
     }
+    if (isTooLong(operation[2])) {
+        answer.textContent = sciNotationConverter(operation[0]);
+        return;
+    }
+    console.log ("third: ", input);
     answer.textContent = operation[2];
     return;
 }
@@ -257,8 +261,6 @@ let operation = [];
 // Answer display
 const answer = document.getElementById('answer');
 
-console.log(answer);
-
 // Number buttons
 const zero = document.getElementById('0');
 zero.addEventListener('click', function(){ operationLimiter('0')});
@@ -299,7 +301,7 @@ signChange.addEventListener('click', function(){ operationLimiter('sign-change')
 const clearButton = document.getElementById('clear');
 clearButton.addEventListener('click', function(){ operationLimiter('clear')});
 const decimal = document.getElementById('.')
-decimal.addEventListener('click', function(){ operationLimiter('decimal')});
+decimal.addEventListener('click', function(){ operationLimiter('.')});
 
 
 
