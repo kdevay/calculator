@@ -19,8 +19,8 @@ function divide(num1, num2) {
 
 //////////// TRANSFORM FUNCTIONS ////////////
 // Changes sign of operation number & display number
-function changeSign() { 
-    if (isSecondInput) { // No changes applied on FirstInput
+function changeSign(isSecondInput, isThirdInput) { 
+    if (isSecondInput) { 
         answer.textContent = parseFloat(operation[0]) * -1;
         operation[0] = answer.textContent + '';
         return;
@@ -64,7 +64,7 @@ function addDecimal(input){
 
 
 function isTooLong(number) {
-    if (number > 9999999999 || number < 0.00000001){
+    if (number.length > 10){
         return true;
     }
     return false;
@@ -74,7 +74,7 @@ function isTooLong(number) {
 // Converts to and from scientific notation for extra large and extra small numbers
 function sciNotationConverter(number) {
     // Convert into long number
-    if (string[3] === 'E') { 
+    if (number[3] === 'E' || number[4] === 'E') { 
         // find index of 'E'
         let splitSpot = number.indexOf('E');
         if (splitSpot === -1) {
@@ -87,20 +87,37 @@ function sciNotationConverter(number) {
         return a * (10 ** b);
     // Convert into scientific notation
     } else { 
+        // Convert string to float
+        number = parseFloat(number);
         let exponent = 0;
-        if (number < 1){ // If very small
-            while (num < 1){
+
+        // Very small positive number
+        if (number < 1 && number > 0){ 
+            while (number < 1){
                 exponent++;
-                num = num * 10;
+                number = number * 10;
+            }
+        // Very small negative number
+        } else if (number < 0 && number > -10){
+            while (number > -1){
+                exponent++;
+                number *= 10;
+            }
+        // Very large negative number
+        } else if (number < 0 && number < -1){
+            while (number < -10){
+                exponent++;
+                number /= 10;
             }
         } else {
-            while (num > 10){
+            while (number > 10){
                 exponent++;
-                num = num / 10;
+                number = number / 10;
             }
         }
-    isDecimalFlag = true;
-    return num + 'E' + exponent;
+    // round to 10's place
+    number = (Math.round(number * 10)) / 10
+    return number + 'E' + exponent;
     }
 }
 
@@ -115,8 +132,6 @@ function operationLimiter(input){
     const isFourthInput = operation.length === 3;
     let isOperator = (input === '/' || input === '*' || input === '-' || input === '+')
 
-
-
     // Input is Decimal //
     if (input === '.') {
         if (!decimalAdded){
@@ -129,7 +144,11 @@ function operationLimiter(input){
 
     // Input is Transformation //
     if (input === 'sign-change') { // sign change
-        changeSign();
+        if (isFirstInput){
+            answer.textContent = 'ERROR';
+            return;
+        }
+        changeSign(isSecondInput, isThirdInput);
         return;
     } else if (input === 'clear'){ // clear
         clear();
@@ -138,6 +157,7 @@ function operationLimiter(input){
 
     // Input is Operator //
     if (isOperator) { 
+        console.log("passed operator test");
         resetFlags();
         if (isFirstInput) { // default to zero if 1st input is operator
             operation.push(0);
@@ -164,14 +184,20 @@ function operationLimiter(input){
     }
 
     // Input is Number //
+    
+    
     if (isSecondInput){
+        console.log("input: ", input);
         operation[0] += input;
-        if (!isTooLong(operation[0])) {
-            answer.textContent = operation[0];
+        console.log("operation 0: ", operation[0]);
+
+        if (isTooLong(operation[0])) {
+            answer.textContent = sciNotationConverter(operation[0]);
             return;
         }
-        answer.textContent = sciNotationConverter(operation[0]);
-        // displayMessage()
+        // 
+        // // displayMessage()
+        answer.textContent = operation[0];
         return;
     } else if (isFourthInput){
         operation[2] += input;
