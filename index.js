@@ -75,10 +75,10 @@ function isTooLong(number) {
 function sciNotationConverter(number) {
     // Convert into long number
     if (string[3] === 'E') { 
-        // find index of "E"
+        // find index of 'E'
         let splitSpot = number.indexOf('E');
         if (splitSpot === -1) {
-            return "ERROR";
+            return 'ERROR';
         }
         // split string in two, omitting e & cast as float
         let a = parseFloat(number.slice(0, splitSpot));
@@ -100,7 +100,7 @@ function sciNotationConverter(number) {
             }
         }
     isDecimalFlag = true;
-    return num + "E" + exponent;
+    return num + 'E' + exponent;
     }
 }
 
@@ -115,7 +115,7 @@ function operationLimiter(input){
                 return;
         }
         // Don't allow multiple decimals in one number
-        return "ERROR"; 
+        return 'ERROR'; 
     }
 
     // Transformations //
