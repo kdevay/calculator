@@ -21,22 +21,22 @@ function divide(num1, num2) {
 // Changes sign of operation number & display number
 function changeSign() { 
     if (isSecondInput) { // No changes applied on FirstInput
-        answer = parseFloat(operation[0]) * -1;
-        operation[0] = answer + '';
+        answer.textContent = parseFloat(operation[0]) * -1;
+        operation[0] = answer.textContent + '';
         return;
     } else if (isThirdInput){
-        answer = '-';
+        answer.textContent = '-';
         (operation[2]) = '-';
         return;
     }
-    answer = parseFloat(operation[2]) * -1;
-    operation[2] = answer + '';
+    answer.textContent = parseFloat(operation[2]) * -1;
+    operation[2] = answer.textContent + '';
     return;
 }
 
 // Clear
 function clear(){
-    answer = '0.0';
+    answer.textContent = '0.0';
     operation = []
     resetFlags();
     return;
@@ -108,7 +108,16 @@ function sciNotationConverter(number) {
 // Handles all user input: storage and error check
 // limits operations to two numbers and one operator
 function operationLimiter(input){
+    // Bools
+    const isFirstInput = operation.length === 0;
+    const isSecondInput = operation.length === 1;
+    const isThirdInput = operation.length === 2;
+    const isFourthInput = operation.length === 3;
+    let isOperator = (input === '/' || input === '*' || input === '-' || input === '+')
+    
     console.log("input: ", input);
+    console.log("typeof input: ", typeof input);
+
 
     // Input is Decimal //
     if (input === '.') {
@@ -130,16 +139,16 @@ function operationLimiter(input){
     }
 
     // Input is Operator //
-    if (input === isOperator) { 
+    if (isOperator) { 
         resetFlags();
         if (isFirstInput) { // default to zero if 1st input is operator
             operation.push(0);
-        } else if(isFourthInput){
+        } else if(isFourthInput){ // limit to 1 operation
             let temp = calculate(operation);
-            operation = [];
-            operation.push(temp);
+            operation = []; // Clear resolved operation
+            operation.push(temp); // add answer as first number in operation
         }
-        operation.push(input);
+        operation.push(input); // add new operator
         return;
     } else if (input === '='){
         if (isFirstInput) { // default to zero
@@ -157,29 +166,39 @@ function operationLimiter(input){
     }
 
     // Input is Number //
-    if ( input === isNumber) {
-        if (isSecondInput){
-            operation[0] += input;
-            if (!isTooLong(operation[0])) {
-                answer = operation[0];
-                return;
-            }
-            answer = sciNotationConverter(operation[0]);
-            // displayMessage()
-            return;
-        } else if (isFourthInput){
-            operation[2] += input;
-            if (!isTooLong(operation[2])) {
-                answer = operation[2];
-                return;
-            }
-            answer = sciNotationConverter(operation[2]);
-            // displayMessage()
+    console.log("is Number");
+    if (isSecondInput){
+        console.log("is second input");
+        operation[0] += input;
+        if (!isTooLong(operation[0])) {
+            answer.textContent = operation[0];
             return;
         }
-        operation.push(input);
+        answer.textContent = sciNotationConverter(operation[0]);
+        // displayMessage()
+        return;
+    } else if (isFourthInput){
+        console.log("is fourth input");
+        operation[2] += input;
+        if (!isTooLong(operation[2])) {
+            answer.textContent = operation[2];
+            return;
+        }
+        answer.textContent = sciNotationConverter(operation[2]);
+        // displayMessage()
         return;
     }
+    operation.push(input);
+    if (isFirstInput){
+        console.log("is first input");
+        console.log('operation[0]: ', operation[0]);
+        console.log('answer: ', answer);
+        answer.textContent = operation[0];
+        return;
+    }
+    console.log("is third input");
+    answer.textContent = operation[2];
+    return;
 }
 
 
@@ -195,6 +214,7 @@ function calculate(array) {
     if (action = '+') {
         ans += add(num1, num2);
     } else if (action = '-') {
+        console.log('entered minus');
         ans += subtract(num1, num2);
     } else if (action = '/') {
         ans += divide(num1, num2);
@@ -209,9 +229,9 @@ function calculate(array) {
     }
     // Ensure number fits display
     if (isTooLong(ans)){
-        answer = sciNotationConverter(ans);
+        answer.textContent = sciNotationConverter(ans);
     }
-    answer = ans;
+    answer.textContent = ans;
     return temp;
 }
 
@@ -219,7 +239,9 @@ function calculate(array) {
 let operation = [];
 
 // Answer display
-let answer = document.getElementById('answer').textContent;
+const answer = document.getElementById('answer');
+
+console.log(answer);
 
 // Number buttons
 const zero = document.getElementById('0');
@@ -252,6 +274,8 @@ const minus = document.getElementById('minus');
 minus.addEventListener('click', function(){ operationLimiter('-')});
 const plus = document.getElementById('plus');
 plus.addEventListener('click', function(){ operationLimiter('+')});
+const equals = document.getElementById('equals');
+equals.addEventListener('click', function(){ operationLimiter('=')});
 
 // Transform buttons
 const signChange = document.getElementById('sign-change');
@@ -261,13 +285,7 @@ clearButton.addEventListener('click', function(){ operationLimiter('clear')});
 const decimal = document.getElementById('.')
 decimal.addEventListener('click', function(){ operationLimiter('decimal')});
 
-// Bools
-const isOperator = ('/' || '*' || '-' || '+');
-const isNumber = ('0' || '1' || '2' || '3' || '4' || '5' || '6' || '7' || '8' || '9');
-const isFirstInput = operation.length === 0;
-const isSecondInput = operation.length === 1;
-const isThirdInput = operation.length === 2;
-const isFourthInput = operation.length === 3;
+
 
 // Enabled if '.' is input or calculation results in decimal
 // Disabled if operator or '=' is input
