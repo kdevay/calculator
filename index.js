@@ -63,7 +63,6 @@ function addDecimal(isFirstInput, isSecondInput, isThirdInput, isFourthInput){
 
 
 function isTooLong(number) {
-    console.log("isTooLong num: ", number);
     let temp = number;
     
     // Make sure number is a float;
@@ -87,12 +86,8 @@ function isTooLong(number) {
 }
 
 
-// Converts to scientific notation and increments exponents 
-// for extra large and extra small numbers
+// Converts display to scientific notation and increments exponents 
 function sciNotationConverter(number) {
-    console.log('entered sciNotationConverter');
-    console.log('number: ', number);
-
     // If answer is in scientific notation
     if (answer.textContent.indexOf('E') !== -1) { 
         let temp = answer.textContent;
@@ -154,11 +149,6 @@ function operationLimiter(input){
     const isThirdInput = operation.length === 2;
     const isFourthInput = operation.length === 3;
     const isOperator = (input === '/' || input === '*' || input === '-' || input === '+')
-    console.log("input: ",  input);
-    console.log("1: ", isFirstInput );
-    console.log("2: ", isSecondInput);
-    console.log("3: ", isThirdInput);
-    console.log("4: ", isFourthInput);
 
     // Input is Decimal //
     if (input === '.') {
@@ -210,7 +200,6 @@ function operationLimiter(input){
     //If concatenating input with existing operand
     if (isSecondInput) { 
         operation[0] += input; // Concatenate with first operand
-        console.log("operation isSecondInput");
         if (isTooLong(operation[0])) {
             answer.textContent = sciNotationConverter(operation[0]);
             return;
@@ -246,7 +235,6 @@ function operationLimiter(input){
 
 // calculator
 function calculate(array) {
-    console.log("entered calculate array");
     let num1 = parseFloat(array[0]); // Ensure numbers are floats
     let num2 = parseFloat(array[2]);
     let operator = array[1];
