@@ -2,13 +2,13 @@
 // multiply 
 function multiply(num1, num2){ return num1 * num2; }
 
-// add 
+// Add 
 function add(num1, num2){ return num1 + num2; }
 
-// subtract 
+// Subtract 
 function subtract(num1, num2){ return num1 - num2; }
 
-// divide 
+// Divide 
 function divide(num1, num2) {
     if (!num2){
         // division by zero
@@ -17,17 +17,18 @@ function divide(num1, num2) {
     return num1 / num2;
 }
 
+
 //////////// TRANSFORM FUNCTIONS ////////////
 // Changes sign of operation number & display number
-function changeSign(isSecondInput, isThirdInput) { 
-    if (isSecondInput) { 
+function changeSign(isFirstInput, isSecondInput, isThirdInput) { 
+    if (isFirstInput || isThirdInput) {
+        answer.textContent = 'ERROR';
+        return;
+    } else if (isSecondInput) { 
         answer.textContent = parseFloat(operation[0]) * -1;
         operation[0] = answer.textContent + '';
         return;
-    } else if (isThirdInput){
-        answer.textContent = 'ERROR';
-        return;
-    }
+    } // If it's fourth input
     answer.textContent = parseFloat(operation[2]) * -1;
     operation[2] = answer.textContent + '';
     return;
@@ -40,11 +41,10 @@ function clear(){
     return;
 }
 
-// decimal
+// Decimal
 function addDecimal(isFirstInput, isSecondInput, isThirdInput, isFourthInput){
     if (isFirstInput || isThirdInput) {
         operation.push('.');
-        return;
     } else if (isSecondInput){
         if (operation[0].indexOf('.') === -1) { // if there isn't already a decimal
             operation[0] += '.'; 
@@ -61,7 +61,6 @@ function addDecimal(isFirstInput, isSecondInput, isThirdInput, isFourthInput){
     return;
 }
 
-
 function isTooLong(number) {
     let temp = number;
     
@@ -70,42 +69,38 @@ function isTooLong(number) {
         temp = parseFloat(number);
     } 
 
-    // If number is positive
-    if (temp > 0) {
+    if (temp > 0) {// If number is positive
         if (temp > 9999999999 || temp < .000000001){
             return true;
         }
         return false
-    } else if (temp > 0) {
-        if (temp < -999999999 || temp > -.00000001){// If number is negative
+    } else if (temp > 0) { // If number is negative
+        if (temp < -999999999 || temp > -.00000001){
             return true;
         }
         return false;
     }
+    // If number is zero
     return false;
 }
 
-
 // Converts display to scientific notation and increments exponents 
 function sciNotationConverter(number) {
+    let temp;
     // If answer is in scientific notation
     if (answer.textContent.indexOf('E') !== -1) { 
-        let temp = answer.textContent;
+        temp = answer.textContent;
+        let splitSpot = temp.indexOf('E'); // find index of 'E'
 
-        // find index of 'E'
-        let splitSpot = temp.indexOf('E');
-        if (splitSpot === -1) {
-            return 'ERROR';
-        }
         // Split string in two  
         let a = temp.slice(0, splitSpot + 1); // Include E in first string
         let b = parseFloat(temp.slice(splitSpot + 1)); // Cast second string (exponent) as float
         return a + (b + 1); // return string with incremented exponent
-
+    
     // If converting into scientific notation
     } else { 
         // Convert string to float
-        let temp = parseFloat(number);
+        temp = parseFloat(number);
         let exponent = 0;
 
         // Very small positive number
@@ -133,107 +128,84 @@ function sciNotationConverter(number) {
                 temp = temp / 10;
             }
         }
-        // round to 10's place
+        // Round to 10's place
         temp = (Math.round(temp * 10)) / 10
         return temp + 'E' + exponent;
     }
 }
 
-//////////// CALCULATION FUNCTIONS ////////////
-// Handles all user input: storage and error check
-// limits operations to two numbers and one operator
+
+
+//////////// INPUT FUNCTION ////////////
+// Stores user input in array & limits operations to two operands and one operator
 function operationLimiter(input){
-    // Booleans for tracking number and type of inputs
+    // Booleans for tracking number and type of input
     const isFirstInput = operation.length === 0;
     const isSecondInput = operation.length === 1;
     const isThirdInput = operation.length === 2;
     const isFourthInput = operation.length === 3;
     const isOperator = (input === '/' || input === '*' || input === '-' || input === '+')
 
-    // Input is Decimal //
     if (input === '.') {
         addDecimal(isFirstInput, isSecondInput, isThirdInput, isFourthInput);
-        return;
-    }
-
-    // Input is Transformation //
-    if (input === 'sign-change') { // sign change
-        if (isFirstInput){
-            answer.textContent = 'ERROR';
-            return;
-        }
-        changeSign(isSecondInput, isThirdInput);
-        return;
-    } else if (input === 'clear'){ // clear
+    } else if (input === 'sign-change') {
+        changeSign(isFirstInput, isSecondInput, isThirdInput);
+    } else if (input === 'clear') { 
         clear();
-        return;
-    }
-
-    // Input is Operator //
-    if (isOperator) { 
+    } else if (isOperator) { 
         if (isFirstInput) { // default to zero if 1st input is operator
             operation.push(0);
-        } else if(isFourthInput){ // limit to 1 operation
+        } else if(isFourthInput) { // limit to 1 operation
             let temp = calculate(operation);
             operation = []; // Clear operation
             operation.push(temp); // Add answer as first operand
+        } else {
+            operation.push(input); // Add operator
         }
-        operation.push(input); // Add operator
-        return;
-    } else if (input === '='){
+    } else if (input === '=') {
         if (isFirstInput) { // Default to zero
             operation.push(0);
         } else if (isThirdInput) {
             let temp = operation[0]; // Default to first operand
             operation = [];
             operation.push(temp);
-        } else if(isFourthInput){
+        } else if(isFourthInput) {
             let temp = calculate(operation);
             operation = [];
             operation.push(temp);
         }
-        // If is second input, default to first operand
-        return
-    }
-
-    // Input is Number //
-    //If concatenating input with existing operand
-    if (isSecondInput) { 
+    // If input is a number
+    } else if (isSecondInput) { 
         operation[0] += input; // Concatenate with first operand
         if (isTooLong(operation[0])) {
             answer.textContent = sciNotationConverter(operation[0]);
-            return;
         } else {
-        answer.textContent = operation[0];
-        return;
+            answer.textContent = operation[0];
         }
-    } else if (isFourthInput){ // Concatenate with  third operand
+    } else if (isFourthInput) { // Concatenate with  third operand
         operation[2] += input;
         if (!isTooLong(operation[2])) {
             answer.textContent = operation[2];
-            return;
         } else {
-        answer.textContent = sciNotationConverter(operation[2]);
-        return;
+            answer.textContent = sciNotationConverter(operation[2]);
         }
     // If inserting a new operand
     } else { 
         operation.push(input);
-
         // If inserting first operand
-        if (isFirstInput){ 
+        if (isFirstInput) { 
             answer.textContent = operation[0];
-            return;
+        } else {
+            // If inserting second operand
+            answer.textContent = operation[2];
         }
-        // If inserting second operand
-        answer.textContent = operation[2];
-        return;
     }
+    return;
 }
 
 
-
-// calculator
+//////////// CALCULATOR FUNCTION ////////////
+// Accepts operation array and performs operation
 function calculate(array) {
     let num1 = parseFloat(array[0]); // Ensure numbers are floats
     let num2 = parseFloat(array[2]);
@@ -260,7 +232,7 @@ function calculate(array) {
     return ans;
 }
 
-// Operation chain
+// Operation chain for tracking user input
 let operation = [];
 
 // Answer display
