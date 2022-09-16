@@ -64,7 +64,9 @@ function addDecimal(isFirstInput, isSecondInput, isThirdInput){
 
 
 function isTooLong(number) {
-    console.log('entered isTooLong')
+    if (typeof number !== 'string') {
+        number = number + '';
+    }
     if (number.length > 10){
         return true;
     }
@@ -122,6 +124,7 @@ function sciNotationConverter(number) {
         }
         // round to 10's place
         temp = (Math.round(temp * 10)) / 10
+        console.log("temp: ", temp);
         hasE = true;
         return temp + 'E' + exponent;
     }
@@ -228,6 +231,7 @@ function operationLimiter(input){
 
 // calculator
 function calculate(array) {
+    console.log("entered calculate array");
     let num1 = parseFloat(array[0]); // Ensure numbers are floats
     let num2 = parseFloat(array[2]);
     let action = array[1];
@@ -251,8 +255,9 @@ function calculate(array) {
     // Ensure number fits display
     if (isTooLong(temp)){
         answer.textContent = sciNotationConverter(ans);
+    } else {
+        answer.textContent = ans;
     }
-    answer.textContent = ans;
     return temp;
 }
 
