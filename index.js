@@ -25,8 +25,7 @@ function changeSign(isSecondInput, isThirdInput) {
         operation[0] = answer.textContent + '';
         return;
     } else if (isThirdInput){
-        answer.textContent = '-';
-        (operation[2]) = '-';
+        answer.textContent = 'ERROR';
         return;
     }
     answer.textContent = parseFloat(operation[2]) * -1;
@@ -38,61 +37,77 @@ function changeSign(isSecondInput, isThirdInput) {
 function clear(){
     answer.textContent = '0.0';
     operation = []
-    resetFlags();
-    return;
-}
-
-// reset flags to default values
-function resetFlags(){
-    decimalAdded = false;
-    hasE = false;
     return;
 }
 
 // decimal
-function addDecimal(isFirstInput, isSecondInput, isThirdInput){
+function addDecimal(isFirstInput, isSecondInput, isThirdInput, isFourthInput){
     if (isFirstInput || isThirdInput) {
         operation.push('.');
+        return;
     } else if (isSecondInput){
-        operation[0] += '.'; 
-    } else {// if isFourthInput 
-        operation[2] += '.';
+        if (operation[0].indexOf('.') === -1) { // if there isn't already a decimal
+            operation[0] += '.'; 
+        } else {
+            answer.textContent = 'ERROR';
+        }
+    } else if (isFourthInput) {
+        if (operation[2].indexOf('.') === -1) { // if there isn't already a decimal
+            operation[2] += '.'; 
+        } else {
+            answer.textContent = 'ERROR';
+        }
     }
-    decimalAdded = true; 
     return;
 }
 
 
 function isTooLong(number) {
-    if (typeof number !== 'string') {
-        number = number + '';
-    }
-    if (number.length > 10){
-        return true;
+    console.log("isTooLong num: ", number);
+    let temp = number;
+    
+    // Make sure number is a float;
+    if (typeof number === 'string') {
+        temp = parseFloat(number);
+    } 
+
+    // If number is positive
+    if (temp > 0) {
+        if (temp > 9999999999 || temp < .000000001){
+            return true;
+        }
+        return false
+    } else if (temp > 0) {
+        if (temp < -999999999 || temp > -.00000001){// If number is negative
+            return true;
+        }
+        return false;
     }
     return false;
 }
 
 
-// Converts to and from scientific notation for extra large and extra small numbers
+// Converts to scientific notation and increments exponents 
+// for extra large and extra small numbers
 function sciNotationConverter(number) {
     console.log('entered sciNotationConverter');
     console.log('number: ', number);
 
-    // Increment existing exponent
-    if (hasE) { 
+    // If answer is in scientific notation
+    if (answer.textContent.indexOf('E') !== -1) { 
         let temp = answer.textContent;
+
         // find index of 'E'
         let splitSpot = temp.indexOf('E');
         if (splitSpot === -1) {
             return 'ERROR';
         }
-        // split string in two,  
-        let a = temp.slice(0, splitSpot + 1); // include e
-        let b = parseFloat(temp.slice(splitSpot + 1)); // cast as float
-        return a + (b + 1);
-        // 
-    // Convert into scientific notation
+        // Split string in two  
+        let a = temp.slice(0, splitSpot + 1); // Include E in first string
+        let b = parseFloat(temp.slice(splitSpot + 1)); // Cast second string (exponent) as float
+        return a + (b + 1); // return string with incremented exponent
+
+    // If converting into scientific notation
     } else { 
         // Convert string to float
         let temp = parseFloat(number);
@@ -116,6 +131,7 @@ function sciNotationConverter(number) {
                 exponent++;
                 temp /= 10;
             }
+        // Very large positive number
         } else {
             while (temp > 10){
                 exponent++;
@@ -124,8 +140,6 @@ function sciNotationConverter(number) {
         }
         // round to 10's place
         temp = (Math.round(temp * 10)) / 10
-        console.log("temp: ", temp);
-        hasE = true;
         return temp + 'E' + exponent;
     }
 }
@@ -134,21 +148,22 @@ function sciNotationConverter(number) {
 // Handles all user input: storage and error check
 // limits operations to two numbers and one operator
 function operationLimiter(input){
-    // Bools for tracking input
+    // Booleans for tracking number and type of inputs
     const isFirstInput = operation.length === 0;
     const isSecondInput = operation.length === 1;
     const isThirdInput = operation.length === 2;
     const isFourthInput = operation.length === 3;
-    let isOperator = (input === '/' || input === '*' || input === '-' || input === '+')
+    const isOperator = (input === '/' || input === '*' || input === '-' || input === '+')
+    console.log("input: ",  input);
+    console.log("1: ", isFirstInput );
+    console.log("2: ", isSecondInput);
+    console.log("3: ", isThirdInput);
+    console.log("4: ", isFourthInput);
 
     // Input is Decimal //
     if (input === '.') {
-        if (!decimalAdded){
-                addDecimal(isFirstInput, isSecondInput, isThirdInput);
-                return;
-        }
-        // Don't allow multiple decimals in one number
-        return 'ERROR'; 
+        addDecimal(isFirstInput, isSecondInput, isThirdInput, isFourthInput);
+        return;
     }
 
     // Input is Transformation //
@@ -166,22 +181,20 @@ function operationLimiter(input){
 
     // Input is Operator //
     if (isOperator) { 
-        resetFlags();
         if (isFirstInput) { // default to zero if 1st input is operator
             operation.push(0);
         } else if(isFourthInput){ // limit to 1 operation
             let temp = calculate(operation);
-            operation = []; // Clear resolved operation
-            operation.push(temp); // add answer as first number in operation
+            operation = []; // Clear operation
+            operation.push(temp); // Add answer as first operand
         }
-        operation.push(input); // add new operator
+        operation.push(input); // Add operator
         return;
     } else if (input === '='){
-        resetFlags();
-        if (isFirstInput) { // default to zero
+        if (isFirstInput) { // Default to zero
             operation.push(0);
         } else if (isThirdInput) {
-            let temp = operation[0];
+            let temp = operation[0]; // Default to first operand
             operation = [];
             operation.push(temp);
         } else if(isFourthInput){
@@ -189,42 +202,44 @@ function operationLimiter(input){
             operation = [];
             operation.push(temp);
         }
+        // If is second input, default to first operand
         return
     }
 
     // Input is Number //
-    if (isSecondInput){
-        operation[0] += input;
+    //If concatenating input with existing operand
+    if (isSecondInput) { 
+        operation[0] += input; // Concatenate with first operand
+        console.log("operation isSecondInput");
         if (isTooLong(operation[0])) {
             answer.textContent = sciNotationConverter(operation[0]);
             return;
-        }
+        } else {
         answer.textContent = operation[0];
         return;
-    } else if (isFourthInput){
+        }
+    } else if (isFourthInput){ // Concatenate with  third operand
         operation[2] += input;
         if (!isTooLong(operation[2])) {
             answer.textContent = operation[2];
             return;
-        }
+        } else {
         answer.textContent = sciNotationConverter(operation[2]);
         return;
-    }
-    operation.push(input);
-    if (isFirstInput){
-        if (isTooLong(operation[0])) {
-            answer.textContent = sciNotationConverter(operation[0]);
+        }
+    // If inserting a new operand
+    } else { 
+        operation.push(input);
+
+        // If inserting first operand
+        if (isFirstInput){ 
+            answer.textContent = operation[0];
             return;
         }
-        answer.textContent = operation[0];
+        // If inserting second operand
+        answer.textContent = operation[2];
         return;
     }
-    if (isTooLong(operation[2])) {
-        answer.textContent = sciNotationConverter(operation[0]);
-        return;
-    }
-    answer.textContent = operation[2];
-    return;
 }
 
 
@@ -234,31 +249,27 @@ function calculate(array) {
     console.log("entered calculate array");
     let num1 = parseFloat(array[0]); // Ensure numbers are floats
     let num2 = parseFloat(array[2]);
-    let action = array[1];
-    let ans = 0;
+    let operator = array[1];
+    let ans;
     
     // Identify operator & call matching function
-    if (action === '+') {
-        ans += add(num1, num2);
-    } else if (action === '-') {
-        ans += subtract(num1, num2);
-    } else if (action === '/') {
-        ans += divide(num1, num2);
-    } else { // action = '*'
-        ans += multiply(num1, num2);
+    if (operator === '+') {
+        ans = add(num1, num2);
+    } else if (operator === '-') {
+        ans = subtract(num1, num2);
+    } else if (operator === '/') {
+        ans = divide(num1, num2);
+    } else { // operator = '*'
+        ans = multiply(num1, num2);
     }
-    // Flag if ans contains decimal
-    let temp = ans + '';
-    if (temp.indexOf('.') !== -1) {
-        decimalAdded = true;
-    }
+
     // Ensure number fits display
-    if (isTooLong(temp)){
+    if (isTooLong(ans)){
         answer.textContent = sciNotationConverter(ans);
     } else {
         answer.textContent = ans;
     }
-    return temp;
+    return ans;
 }
 
 // Operation chain
@@ -308,30 +319,3 @@ const clearButton = document.getElementById('clear');
 clearButton.addEventListener('click', function(){ operationLimiter('clear')});
 const decimal = document.getElementById('.')
 decimal.addEventListener('click', function(){ operationLimiter('.')});
-
-
-
-// Enabled if '.' is input or calculation results in decimal
-// Disabled if operator or '=' is input
-let decimalAdded = false; 
-let hasE = false;
-
-
-
-
-/*
-logic for converting from sci notation into regular number
-    // Convert into long number
-    if (hasE) { 
-        // find index of 'E'
-        let splitSpot = temp.indexOf('E');
-        if (splitSpot === -1) {
-            return 'ERROR';
-        }
-        // split string in two, omitting e & cast as float
-        let a = parseFloat(temp.slice(0, splitSpot));
-        let b = parseFloat(temp.slice(splitSpot + 1));
-        // first half of string * (10 ** second half of string)
-        return a * (10 ** b);
-
-*/
