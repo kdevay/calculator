@@ -63,6 +63,7 @@ function addDecimal(isFirstInput, isSecondInput, isThirdInput){
 
 
 function isTooLong(number) {
+    console.log('entered isTooLong')
     if (number.length > 10){
         return true;
     }
@@ -72,51 +73,57 @@ function isTooLong(number) {
 
 // Converts to and from scientific notation for extra large and extra small numbers
 function sciNotationConverter(number) {
+    console.log('entered sciNotationConverter');
+    console.log('number: ', number);
+    let temp = number;
+
     // Convert into long number
-    if (number[3] === 'E' || number[4] === 'E') { 
+    if (temp[3] === 'E' || temp[4] === 'E') { 
         // find index of 'E'
-        let splitSpot = number.indexOf('E');
+        let splitSpot = temp.indexOf('E');
         if (splitSpot === -1) {
             return 'ERROR';
         }
         // split string in two, omitting e & cast as float
-        let a = parseFloat(number.slice(0, splitSpot));
-        let b = parseFloat(number.slice(splitSpot + 1));
+        let a = parseFloat(temp.slice(0, splitSpot));
+        let b = parseFloat(temp.slice(splitSpot + 1));
         // first half of string * (10 ** second half of string)
         return a * (10 ** b);
     // Convert into scientific notation
     } else { 
         // Convert string to float
-        number = parseFloat(number);
-        let exponent = 0;
-
+        temp = parseFloat(temp);
+        console.log('converted to float')
         // Very small positive number
-        if (number < 1 && number > 0){ 
-            while (number < 1){
+        if (temp < 1 && temp > 0){ 
+            console.log('small positive number');
+            while (temp < 1){
                 exponent++;
-                number = number * 10;
+                temp = temp * 10;
             }
         // Very small negative number
-        } else if (number < 0 && number > -10){
-            while (number > -1){
+        } else if (temp < 0 && temp > -10){
+            while (temp > -1){
                 exponent++;
-                number *= 10;
+                temp *= 10;
             }
         // Very large negative number
-        } else if (number < 0 && number < -1){
-            while (number < -10){
+        } else if (temp < 0 && temp < -1){
+            while (temp < -10){
                 exponent++;
-                number /= 10;
+                temp /= 10;
             }
         } else {
-            while (number > 10){
+            while (temp > 10){
                 exponent++;
-                number = number / 10;
+                temp = temp / 10;
             }
         }
-    // round to 10's place
-    number = (Math.round(number * 10)) / 10
-    return number + 'E' + exponent;
+        console.log('exponent: ', exponent);
+        // round to 10's place
+        temp = (Math.round(temp * 10)) / 10
+        console.log('number: ', temp);
+        return temp + 'E' + exponent;
     }
 }
 
@@ -307,4 +314,5 @@ decimal.addEventListener('click', function(){ operationLimiter('.')});
 
 // Enabled if '.' is input or calculation results in decimal
 // Disabled if operator or '=' is input
-let decimalAdded = false; 
+let decimalAdded = false;
+let exponent = 0;
