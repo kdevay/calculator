@@ -61,6 +61,7 @@ function addDecimal(isFirstInput, isSecondInput, isThirdInput, isFourthInput){
     return;
 }
 
+// Returns true if answer is too long to fit display
 function isTooLong(number) {
     let temp = number;
     
