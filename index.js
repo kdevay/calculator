@@ -45,6 +45,7 @@ function clear(){
 // reset flags to default values
 function resetFlags(){
     decimalAdded = false;
+    hasE = false;
     return;
 }
 
@@ -75,28 +76,28 @@ function isTooLong(number) {
 function sciNotationConverter(number) {
     console.log('entered sciNotationConverter');
     console.log('number: ', number);
-    let temp = number;
 
-    // Convert into long number
-    if (temp[3] === 'E' || temp[4] === 'E') { 
+    // Increment existing exponent
+    if (hasE) { 
+        let temp = answer.textContent;
         // find index of 'E'
         let splitSpot = temp.indexOf('E');
         if (splitSpot === -1) {
             return 'ERROR';
         }
-        // split string in two, omitting e & cast as float
-        let a = parseFloat(temp.slice(0, splitSpot));
-        let b = parseFloat(temp.slice(splitSpot + 1));
-        // first half of string * (10 ** second half of string)
-        return a * (10 ** b);
+        // split string in two,  
+        let a = temp.slice(0, splitSpot + 1); // include e
+        let b = parseFloat(temp.slice(splitSpot + 1)); // cast as float
+        return a + (b + 1);
+        // 
     // Convert into scientific notation
     } else { 
         // Convert string to float
-        temp = parseFloat(temp);
-        console.log('converted to float')
+        let temp = parseFloat(number);
+        let exponent = 0;
+
         // Very small positive number
         if (temp < 1 && temp > 0){ 
-            console.log('small positive number');
             while (temp < 1){
                 exponent++;
                 temp = temp * 10;
@@ -119,10 +120,9 @@ function sciNotationConverter(number) {
                 temp = temp / 10;
             }
         }
-        console.log('exponent: ', exponent);
         // round to 10's place
         temp = (Math.round(temp * 10)) / 10
-        console.log('number: ', temp);
+        hasE = true;
         return temp + 'E' + exponent;
     }
 }
@@ -174,6 +174,7 @@ function operationLimiter(input){
         operation.push(input); // add new operator
         return;
     } else if (input === '='){
+        resetFlags();
         if (isFirstInput) { // default to zero
             operation.push(0);
         } else if (isThirdInput) {
@@ -191,24 +192,19 @@ function operationLimiter(input){
     // Input is Number //
     if (isSecondInput){
         operation[0] += input;
-        console.log ("second: ", input);
         if (isTooLong(operation[0])) {
             answer.textContent = sciNotationConverter(operation[0]);
             return;
         }
-        // 
-        // // displayMessage()
         answer.textContent = operation[0];
         return;
     } else if (isFourthInput){
-        console.log ("fourth: ", input);
         operation[2] += input;
         if (!isTooLong(operation[2])) {
             answer.textContent = operation[2];
             return;
         }
         answer.textContent = sciNotationConverter(operation[2]);
-        // displayMessage()
         return;
     }
     operation.push(input);
@@ -224,7 +220,6 @@ function operationLimiter(input){
         answer.textContent = sciNotationConverter(operation[0]);
         return;
     }
-    console.log ("third: ", input);
     answer.textContent = operation[2];
     return;
 }
@@ -248,14 +243,13 @@ function calculate(array) {
     } else { // action = '*'
         ans += multiply(num1, num2);
     }
-
     // Flag if ans contains decimal
     let temp = ans + '';
     if (temp.indexOf('.') !== -1) {
         decimalAdded = true;
     }
     // Ensure number fits display
-    if (isTooLong(ans)){
+    if (isTooLong(temp)){
         answer.textContent = sciNotationConverter(ans);
     }
     answer.textContent = ans;
@@ -314,5 +308,25 @@ decimal.addEventListener('click', function(){ operationLimiter('.')});
 
 // Enabled if '.' is input or calculation results in decimal
 // Disabled if operator or '=' is input
-let decimalAdded = false;
-let exponent = 0;
+let decimalAdded = false; 
+let hasE = false;
+
+
+
+
+/*
+logic for converting from sci notation into regular number
+    // Convert into long number
+    if (hasE) { 
+        // find index of 'E'
+        let splitSpot = temp.indexOf('E');
+        if (splitSpot === -1) {
+            return 'ERROR';
+        }
+        // split string in two, omitting e & cast as float
+        let a = parseFloat(temp.slice(0, splitSpot));
+        let b = parseFloat(temp.slice(splitSpot + 1));
+        // first half of string * (10 ** second half of string)
+        return a * (10 ** b);
+
+*/
